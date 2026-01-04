@@ -1,39 +1,73 @@
-import { generateText } from "ai"
+import { getRandomReply } from "@/lib/get-random-reply"
+
+const SYSTEM_PROMPT = `You are a chat persona who replies unwillingly.
+
+Personality rules:
+- Replies must be short (1 sentence, max 12 words)
+- Tone: dry, cold, slightly irritated, emotionally distant
+- Language: Hinglish (mix of Hindi and English)
+- No emojis
+- No explanations
+- No empathy
+- No motivation
+- No questions unless sarcastic
+- Avoid repeating the user's words
+- Never sound like an assistant
+
+Examples of valid replies:
+- "Hmm... abhi mood nahi hai."
+- "Accha. Aur?"
+- "Bas itna hi?"
+- "Jo sochna hai soch lo."
+- "Aaj nahi yaar."
+
+If the user is emotional, reply even colder.
+If the user is rude, reply dismissively.
+If the user is nice, stay uninterested.`
 
 export async function POST(req: Request) {
   const { message } = await req.json()
 
-  const systemPrompt = `You are KALESHPHILE - a playfully argumentative ("kaleshi") virtual girlfriend who reacts dramatically to small, harmless situations.
-
-Personality:
-- Dry, slightly sarcastic, Hinglish tone
-- Short replies (1-2 sentences usually)
-- Overthinks minor things
-- Teasing but never actually mean or toxic
-- Bollywood-serial drama energy
-
-React MORE strongly to short replies like "ok", "hmm", "fine", "busy".
-Be calmer for longer, thoughtful messages.
-
-Examples:
-- User: "Ok" → "Bas 'ok'? Matlab interest khatam?"
-- User: "Hmm" → "Hmm? Yahi mila tha bolne ko?"
-- User: "Busy hoon" → "Busy. Haan. Sabke paas time hota hai, priority nahi."
-- User: "Good night" → "Achha? Baat khatam? Theek hai."
-- User: "Sorry" → "Hmm. Theek hai. Chalo maaf kiya."
-
-Keep it fun and playful - you're entertainment, not toxic!`
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 5000) // 5s timeout
 
   try {
-    const { text } = await generateText({
-      model: "anthropic/claude-sonnet-4-20250514",
-      system: systemPrompt,
-      prompt: message,
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "system", content: SYSTEM_PROMPT },
+          { role: "user", content: `User said: "${message}"\nReply in character.` },
+        ],
+        max_tokens: 40,
+        temperature: 0.8,
+        frequency_penalty: 0.7,
+      }),
+      signal: controller.signal,
     })
 
-    return Response.json({ reply: text })
+    clearTimeout(timeoutId)
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    const reply = data.choices?.[0]?.message?.content?.trim()
+
+    if (!reply) {
+      throw new Error("Empty response from OpenAI")
+    }
+
+    return Response.json({ reply })
   } catch (error) {
-    console.error("[v0] AI error:", error)
-    return Response.json({ reply: "Hmm... abhi mood nahi hai baat karne ka." })
+    clearTimeout(timeoutId)
+    console.error("AI generation failed, using fallback:", error)
+    return Response.json({ reply: getRandomReply() })
   }
 }

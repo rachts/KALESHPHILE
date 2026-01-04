@@ -58,12 +58,29 @@ export function KaleshphileChat() {
     }
 
     setMessages((prev) => [...prev, userMessage])
-    setInput("") // Clear input immediately
+    setInput("")
     setIsLoading(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 600))
+    let reply: string
 
-    const reply = getRandomReply()
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: trimmedInput }),
+      })
+
+      if (!response.ok) {
+        throw new Error("API request failed")
+      }
+
+      const data = await response.json()
+      reply = data.reply
+    } catch (error) {
+      console.error("Failed to get AI response:", error)
+      // Fallback to canned reply
+      reply = getRandomReply()
+    }
 
     const assistantMessage: Message = {
       id: (Date.now() + 1).toString(),

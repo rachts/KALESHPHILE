@@ -7,7 +7,7 @@ const dryReplies = [
   "Theek hai, maan liya.",
   "Bas?",
   "Aur kuch?",
-  "Samajh gaye, relax.",
+  "Samajh gaya, relax.",
   "Thoda shaant ho jao.",
   "Aaj nahi yaar.",
   "Mujhe argue karne ka mann nahi hai.",
@@ -20,7 +20,6 @@ const dryReplies = [
   "Abhi dimag kharab hai.",
   "Later baat karte hain.",
   "Mujhe force mat karo.",
-  "I'm so done with this conversation.",
 ]
 
 export function getRandomReply(): string {
