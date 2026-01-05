@@ -1,28 +1,27 @@
-// Canned "Dry / Kalesh" Response Bank
-const dryReplies = [
-  "Hmm... abhi mood nahi hai baat karne ka.",
-  "Accha.",
-  "Jo sochna hai soch lo.",
-  "Haan haan, bol liya?",
-  "Theek hai, maan liya.",
+const KALESH_REPLIES = [
+  "Hmm.",
   "Bas?",
   "Aur kuch?",
-  "Samajh gaya, relax.",
-  "Thoda shaant ho jao.",
-  "Aaj nahi yaar.",
-  "Mujhe argue karne ka mann nahi hai.",
-  "Tum hamesha aise hi bolte ho.",
-  "Okay 👍",
-  "Hmm.",
+  "Over mat socho.",
+  "Abhi mood nahi.",
+  "Jo hai wahi hai.",
+  "Drama kam karo.",
+  "Itna serious kyun ho?",
+  "Ignore kar rahi hoon.",
+  "Mujhe farak nahi padta.",
+  "Thik hai.",
+  "Haan haan.",
   "Whatever.",
-  "Jaise tum bolo.",
-  "Ispe react karna zaroori hai?",
-  "Abhi dimag kharab hai.",
-  "Later baat karte hain.",
+  "Bol liya?",
+  "Patience nahi hai.",
+  "Aaj nahi.",
   "Mujhe force mat karo.",
+  "Overreact mat karo.",
+  "Samajh jao khud.",
+  "Argue karne ka mann nahi.",
 ]
 
 export function getRandomReply(): string {
-  const index = Math.floor(Math.random() * dryReplies.length)
-  return dryReplies[index]
+  const index = Math.floor(Math.random() * KALESH_REPLIES.length)
+  return KALESH_REPLIES[index]
 }
