@@ -1,6 +1,6 @@
 # KALESHPHILE
 
-Your dramatic AI girlfriend who keeps you on your toes! A fun, satirical chat application featuring a "Kaleshi" (playfully argumentative) AI companion powered by modern AI.
+Your dramatic AI girlfriend who keeps you on your toes! A fun, satirical chat application featuring a "Kaleshi" AI companion powered by modern AI.
 
 ## Features
 
